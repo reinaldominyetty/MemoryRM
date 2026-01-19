@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory RM - Juego de Memoria</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="body-bg-default">
+    <!-- Partículas de fondo -->
+    <div class="particles" id="welcome-particles"></div> <!-- Partículas para la bienvenida -->
+
+    <!-- Pantalla de bienvenida -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <h1 class="title">MEMORY RM</h1>
+        <div class="game-container">
+            <div class="difficulty-section">
+                <h2 class="difficulty-title">Selecciona la Dificultad</h2>
+                <div class="difficulty-options">
+                    <button class="difficulty-btn" data-difficulty="easy">Fácil (4x3)</button>
+                    <button class="difficulty-btn" data-difficulty="medium">Medio (4x4)</button>
+                    <button class="difficulty-btn" data-difficulty="hard">Difícil (4x6)</button>
+                </div>
+            </div>
+            <div class="theme-section">
+                <h2 class="theme-title">Selecciona un Tema</h2>
+                <div class="theme-options" id="themeOptions">
+                    <!-- Los botones de tema se generarán aquí con JS -->
+                </div>
+            </div>
+            <div class="background-section">
+                <h2 class="background-title">Selecciona el Fondo</h2>
+                <div class="background-options" id="backgroundOptions"></div>
+            </div>
+            <div class="high-scores-section">
+                <h3 class="high-scores-title">Mejores Puntuaciones</h3>
+                <div id="highScoresDisplay">
+                    <p><strong>Fácil:</strong> <span id="easy-best">--</span></p>
+                    <p><strong>Medio:</strong> <span id="medium-best">--</span></p>
+                    <p><strong>Difícil:</strong> <span id="hard-best">--</span></p>
+                </div>
+            </div>
+            <button class="play-btn" id="playBtn" disabled>Jugar Ahora</button>
+        </div>
+    </div>
+
+    <!-- Pantalla del juego -->
+    <div class="game-screen" id="gameScreen">
+        <div class="particles" id="game-particles"></div> <!-- Partículas para el juego -->
+        <div class="game-header">
+            <h2 class="game-title">MEMORY RM</h2>
+            <div class="game-stats">
+                <div class="stat">
+                    <div class="stat-label">Movimientos</div>
+                    <div class="stat-value" id="moves">0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Tiempo</div>
+                    <div class="stat-value" id="timer">00:00</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Parejas</div>
+                    <div class="stat-value" id="pairs">0/<span id="totalPairs">0</span></div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Combo</div>
+                    <div class="stat-value" id="combo">x0</div>
+                </div>
+                <button class="sound-control-btn" id="soundControlBtn" title="Activar/Silenciar Sonido">
+                    <svg class="icon-sound-on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                    </svg>
+                    <svg class="icon-sound-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L7 9H3v6h4l5 5v-6.73l-5-5V4z"/>
+                    </svg>
+                </button>
+                <button class="pause-control-btn" id="pauseBtn" title="Pausar Juego">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="grid-container">
+            <div class="memory-grid" id="memoryGrid"></div>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" id="restartBtn">Reiniciar</button>
+            <button class="control-btn" id="backBtn">Volver al Menú</button>
+        </div>
+    </div>
+
+    <!-- Modal de victoria -->
+    <div class="victory-modal" id="victoryModal">
+        <div class="victory-content">
+            <h2 class="victory-title">¡Felicidades!</h2>
+            <p id="newRecordText" class="new-record-text"></p>
+            <p>Has completado el juego</p>
+            <div class="victory-stats" id="victoryStats"></div>
+            <button class="play-btn" id="playAgainBtn">Jugar de Nuevo</button>
+        </div>
+    </div>
+
+    <!-- Modal de Pausa -->
+    <div class="pause-modal" id="pauseModal">
+        <div class="pause-content">
+            <h2 class="pause-title">Juego en Pausa</h2>
+            <div class="pause-controls">
+                <button class="play-btn" id="resumeBtn">Reanudar</button>
+                <button class="control-btn" id="pauseRestartBtn">Reiniciar</button>
+                <button class="control-btn" id="pauseBackBtn">Volver al Menú</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="copyright">
+        Desarrollado por Reinaldo MP
+    </div>
+    
+    <!-- Efectos de Sonido -->
+    <audio id="sound-flip" src="sounds/flip.mp3" preload="auto"></audio>
+    <audio id="sound-match" src="sounds/match.mp3" preload="auto"></audio>
+    <audio id="sound-no-match" src="sounds/no-match.mp3" preload="auto"></audio>
+    <audio id="sound-victory" src="sounds/victory.mp3" preload="auto"></audio>
+    <audio id="sound-click" src="sounds/click.mp3" preload="auto"></audio>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
